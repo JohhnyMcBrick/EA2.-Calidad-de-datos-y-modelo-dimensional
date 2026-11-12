@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: stg_ventas
+    description: "Ventas de EnerAndes de la capa plata, sin cambios."
+    columns:
+      - name: periodo
+        data_tests: [not_null]
+      - name: divipola
+        data_tests: [not_null]
+  - name: stg_precio_bolsa
+    description: "Precio de bolsa por fecha y hora de la capa plata."
+    columns:
+      - name: fecha
+        data_tests: [not_null]
+  - name: stg_demanda
+    description: "Demanda real por fecha y hora de la capa plata."
+    columns:
+      - name: fecha
+        data_tests: [not_null]
+  - name: stg_generacion
+    description: "Generación por planta, fecha y hora de la capa plata."
+    columns:
+      - name: codigo_recurso
+        data_tests: [not_null]
+  - name: stg_embalses
+    description: "Nivel diario de los embalses de la capa plata."
+    columns:
+      - name: fecha
+        data_tests: [not_null, unique]
+  - name: stg_aportes
+    description: "Aportes hídricos diarios de la capa plata."
+    columns:
+      - name: fecha
+        data_tests: [not_null, unique]
+  - name: stg_recursos
+    description: "Catálogo de plantas de ListadoRecursos de la capa plata."
+    columns:
+      - name: codigo_recurso
+        data_tests: [not_null, unique]
+  - name: stg_precipitacion
+    description: "Precipitación diaria por estación del IDEAM de la capa plata."
+    columns:
+      - name: codigo_estacion
+        data_tests: [not_null]
+  - name: stg_temperatura
+    description: "Temperatura diaria por estación del IDEAM de la capa plata."
+    columns:
+      - name: codigo_estacion
+        data_tests: [not_null]
+  - name: stg_oni
+    description: "Índice ONI mensual de NOAA con la fase del fenómeno."
+    columns:
+      - name: fecha
+        data_tests: [not_null, unique]

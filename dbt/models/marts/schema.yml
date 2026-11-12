@@ -1,0 +1,169 @@
+version: 2
+
+models:
+  - name: dim_fecha
+    description: "Un día. Calendario del proyecto con mes, trimestre, día de la semana y fase ENSO del mes."
+    columns:
+      - name: fecha_id
+        description: "Llave del día en formato AAAAMMDD."
+        data_tests: [unique, not_null]
+      - name: fecha
+        data_tests: [unique, not_null]
+      - name: mes_id
+        data_tests: [not_null]
+      - name: fase_enso
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["El Niño", "La Niña", "Neutral", "Sin dato"]
+
+  - name: dim_mes
+    description: "Un mes. Se obtiene de dim_fecha y trae la fase ENSO del mes."
+    columns:
+      - name: mes_id
+        description: "Llave del mes en formato AAAAMM."
+        data_tests: [unique, not_null]
+
+  - name: dim_municipio
+    description: "Un municipio de Antioquia con su código DIVIPOLA."
+    columns:
+      - name: municipio_id
+        description: "Código DIVIPOLA de 5 dígitos."
+        data_tests: [unique, not_null]
+
+  - name: dim_segmento
+    description: "Un segmento de cliente."
+    columns:
+      - name: segmento_id
+        data_tests: [unique, not_null]
+      - name: segmento
+        data_tests: [unique, not_null]
+
+  - name: dim_recurso
+    description: "Una planta de generación. Viene de ListadoRecursos de XM; las plantas que generan y no están en el catálogo se agregan como NO CATALOGADO."
+    columns:
+      - name: recurso_id
+        description: "Código SIC de la planta."
+        data_tests: [unique, not_null]
+
+  - name: dim_estacion
+    description: "Una estación meteorológica del IDEAM con su municipio y coordenadas."
+    columns:
+      - name: estacion_id
+        description: "Código de la estación del IDEAM."
+        data_tests: [unique, not_null]
+      - name: municipio
+        data_tests: [not_null]
+
+  - name: fact_ventas_mensual
+    description: "Grano: un mes, un municipio, un segmento y un tipo de compra. Ventas de energía de EnerAndes de 2023 a 2026."
+    columns:
+      - name: mes_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_mes')
+                field: mes_id
+      - name: municipio_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_municipio')
+                field: municipio_id
+      - name: segmento_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_segmento')
+                field: segmento_id
+      - name: tipo_compra
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["Bolsa", "Contrato"]
+      - name: energia_kwh
+        data_tests: [not_null]
+
+  - name: fact_mercado_horario
+    description: "Grano: una hora de un día en el sistema interconectado nacional, con el precio de bolsa y la demanda real."
+    columns:
+      - name: mercado_hora_id
+        description: "Llave de la hora: AAAAMMDD * 100 + hora."
+        data_tests: [unique, not_null]
+      - name: fecha_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: fecha_id
+      - name: hora
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+                quote: false
+
+  - name: fact_generacion_recurso
+    description: "Grano: una planta de generación en una hora de un día."
+    columns:
+      - name: generacion_id
+        data_tests: [unique, not_null]
+      - name: fecha_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: fecha_id
+      - name: recurso_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_recurso')
+                field: recurso_id
+      - name: hora
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+                quote: false
+
+  - name: fact_hidrologia_diaria
+    description: "Grano: un día. Nivel de los embalses y aportes hídricos del sistema."
+    columns:
+      - name: fecha_id
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: fecha_id
+
+  - name: fact_clima_diario
+    description: "Grano: una estación del IDEAM en un día, con la precipitación y la temperatura."
+    columns:
+      - name: clima_id
+        data_tests: [unique, not_null]
+      - name: fecha_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: fecha_id
+      - name: estacion_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_estacion')
+                field: estacion_id

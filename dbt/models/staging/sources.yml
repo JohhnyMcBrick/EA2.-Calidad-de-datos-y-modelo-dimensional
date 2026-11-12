@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: plata
+    meta:
+      external_location: "data/silver/{name}.parquet"
+    tables:
+      - name: enerandes_ventas
+      - name: xm_precio_bolsa
+      - name: xm_demanda
+      - name: xm_generacion
+      - name: xm_embalses
+      - name: xm_aportes
+      - name: xm_recursos
+      - name: ideam_precipitacion
+      - name: ideam_temperatura
+      - name: noaa_oni

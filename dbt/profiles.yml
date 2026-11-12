@@ -1,0 +1,18 @@
+# Conexion de dbt con la base de datos. Aqui: un archivo DuckDB local.
+# Es un archivo YAML: no se ejecuta; dbt lo lee para saber donde crear las tablas.
+
+# El nombre de la conexion: el mismo de "profile" en dbt_project.yml
+observatorio:
+  # La conexion que se usa por defecto: dev (desarrollo)
+  target: dev
+  # Las conexiones disponibles (un proyecto real tiene tambien prod, produccion)
+  outputs:
+    # La conexion dev
+    dev:
+      # El motor de base de datos: DuckDB (lo trae el paquete dbt-duckdb)
+      type: duckdb
+      # El archivo de la base de datos de la capa oro. La ruta es desde la raiz
+      # del proyecto, porque dbt se ejecuta desde ahi
+      path: data/observatorio.duckdb
+      # Cuantos modelos se crean al mismo tiempo: 1, uno detras de otro
+      threads: 1
