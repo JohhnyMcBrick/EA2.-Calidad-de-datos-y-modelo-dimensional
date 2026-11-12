@@ -198,3 +198,5 @@ En los 153 días clasificados como El Niño el precio de bolsa promedió 693 COP
 | NO CATALOGADO | 1 | 4.5 | 0.0 |
 
 La generación hidráulica aporta cerca del 72 % de la energía y la térmica cerca del 20 %. Una planta aparece en generación pero no en el catálogo de recursos de XM, por eso queda como NO CATALOGADO.
+
+
